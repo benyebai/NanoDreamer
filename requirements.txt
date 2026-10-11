@@ -1,0 +1,4 @@
+numpy>=2,<3
+pygame>=2.6,<3
+benyebai-tensorgrad @ git+https://github.com/benyebai/TensorGrad.git@main
+benyebai-mininn @ git+https://github.com/benyebai/MiniNN.git@main

@@ -1,0 +1,19 @@
+# Local environment and Python caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage*
+
+# Generated training and demo output
+checkpoints/
+media/
+*.npz
+
+# Build and OS files
+build/
+dist/
+*.egg-info/
+.DS_Store
