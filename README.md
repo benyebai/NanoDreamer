@@ -28,3 +28,4 @@ Train before using `--actor` on a fresh clone. Checkpoints are saved locally in
 `checkpoints/` and ignored by Git. Arrow keys or WASD move; R restarts.
 
 Sprites: [Genjoyers/Pac-Man](https://github.com/Genjoyers/Pac-Man), [Apache 2.0](assets/LICENSE).
+# TinyDreamer
