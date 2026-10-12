@@ -7,6 +7,9 @@ __pycache__/
 .ruff_cache/
 .coverage*
 
+# Local game launcher
+play.py
+
 # Generated training and demo output
 checkpoints/
 media/

@@ -15,21 +15,17 @@ uv pip install --python .venv/bin/python -r requirements.txt
 ## Run
 
 ```bash
-.venv/bin/python play.py                       # play the toy game
-.venv/bin/python play.py --ghost               # play against a ghost
 .venv/bin/python train_actor_critic.py         # train the toy-game actor-critic
-.venv/bin/python play.py --ghost --actor       # watch a trained actor
 .venv/bin/python train_visual.py               # train the Space Invaders encoder
 .venv/bin/python -m unittest discover -s tests -v
 ```
 
-Train before using `--actor` on a fresh clone. Actor checkpoints are saved in `checkpoints/` and ignored by Git. Arrow keys or WASD move; R restarts. Game sprites: [Genjoyers/Pac-Man](https://github.com/Genjoyers/Pac-Man), [Apache 2.0](assets/LICENSE).
+Actor checkpoints are saved in `checkpoints/` and ignored by Git. Game sprites: [Genjoyers/Pac-Man](https://github.com/Genjoyers/Pac-Man), [Apache 2.0](assets/LICENSE).
 
 ## Layout
 
 - `tinydreamer/`: game, actor, critic, trajectory, returns, evaluation, and visual encoder.
 - `train.py`, `train_actor_critic.py`, `train_visual.py`: training entry points.
-- `play.py`: interactive toy game and policy playback.
 - `tests/`: game, learning, and encoder checks.
 
 ## Space Invaders encoder result
