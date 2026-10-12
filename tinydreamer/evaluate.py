@@ -1,7 +1,7 @@
 import numpy as np
 
-from game import PelletMaze
-from trajectory import collect_episode
+from tinydreamer.game import PelletMaze
+from tinydreamer.trajectory import collect_episode
 
 
 def evaluate_policy(game, policy, amt_eps):

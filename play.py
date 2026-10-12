@@ -6,8 +6,8 @@ from pathlib import Path
 import numpy as np
 import pygame
 
-from game import LEVEL, PelletMaze
-from actor import Actor
+from tinydreamer.game import LEVEL, PelletMaze
+from tinydreamer.actor import Actor
 from mininn.optimizers import Adam
 from mininn.checkpoint import load_checkpoint
 

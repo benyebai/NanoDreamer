@@ -2,8 +2,8 @@ import unittest
 
 import numpy as np
 
-from evaluate import evaluate_policy
-from game import PelletMaze
+from tinydreamer.evaluate import evaluate_policy
+from tinydreamer.game import PelletMaze
 
 
 class GhostTests(unittest.TestCase):

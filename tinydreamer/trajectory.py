@@ -1,6 +1,6 @@
 import numpy as np
 
-from game import PelletMaze
+from tinydreamer.game import PelletMaze
 
 
 def collect_episode(game, policy):

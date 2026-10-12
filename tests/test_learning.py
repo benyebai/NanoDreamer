@@ -3,10 +3,10 @@ import unittest
 import numpy as np
 from mininn.optimizers import Adam
 
-from actor import Actor
-from critic import Critic
-from game import PelletMaze
-from returns import calculate_returns, calculate_lambda_returns
+from tinydreamer.actor import Actor
+from tinydreamer.critic import Critic
+from tinydreamer.game import PelletMaze
+from tinydreamer.returns import calculate_returns, calculate_lambda_returns
 from train_actor_critic import train_one_episode
 
 

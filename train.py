@@ -4,11 +4,11 @@ from mininn.checkpoint import save_checkpoint
 from mininn.optimizers import Adam, clip_grad_norm
 from tensorgrad import Tensor
 
-from actor import Actor
-from evaluate import evaluate_policy
-from game import PelletMaze
-from returns import calculate_returns
-from trajectory import collect_episode
+from tinydreamer.actor import Actor
+from tinydreamer.evaluate import evaluate_policy
+from tinydreamer.game import PelletMaze
+from tinydreamer.returns import calculate_returns
+from tinydreamer.trajectory import collect_episode
 
 
 def train_one_episode(actor, game, optimizer, discount):
