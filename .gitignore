@@ -1,23 +1,9 @@
-# Local environment and Python caches
-.venv/
+/archive/
+/artifacts/
+/runs/
+.venv*/
 __pycache__/
 *.py[cod]
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage*
-
-# Local game launcher
-play.py
-
-# Generated training and demo output
-checkpoints/
-media/
-*.npz
-artifacts/
-
-# Build and OS files
-build/
-dist/
-*.egg-info/
+*.pt
+*.pth
 .DS_Store

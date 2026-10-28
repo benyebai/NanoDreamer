@@ -1,35 +1,37 @@
-# TinyDreamer
+# NanoDreamer
 
-A small Dreamer-inspired learning project built on my [TensorGrad](https://github.com/benyebai/TensorGrad) and [MiniNN](https://github.com/benyebai/MiniNN) libraries.
+The final agent from [my blog](https://www.benjamin-bai.com/projects/nanodreamer).
+A CNN encodes each frame, a transformer predicts what happens next, and an actor
+learns from five-step imagined rollouts. The critic uses real and imagined returns.
 
-- Project 5: a Pac-Man-style toy game, trajectories, returns, and actor-critic learning.
-- Project 6: a visual encoder-decoder for MinAtar Space Invaders. MinAtar supplies 10×10 object-channel observations, not raw video pixels.
-
-## Setup
-
-```bash
-uv venv --python 3.12 .venv
-uv pip install --python .venv/bin/python -r requirements.txt
+```text
+nanodreamer/
+  config.py     # training settings
+  models.py     # encoder, decoder and world model
+  agent.py      # actor, critic and learning updates
+  replay.py     # episode storage and sampling
+  losses.py     # distributional losses and lambda returns
+scripts/
+  train.py      # gameplay, training, evaluation and checkpoints
+tests/
+  test_agent.py
+  test_training.py
 ```
 
-## Run
+Use Python 3.12:
 
-```bash
-.venv/bin/python train_actor_critic.py         # train the toy-game actor-critic
-.venv/bin/python train_visual.py               # train the Space Invaders encoder
-.venv/bin/python -m unittest discover -s tests -v
+```sh
+python3.12 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m unittest discover -s tests -q
+python -m scripts.train space_invaders artifacts/space_invaders --seed 0
 ```
 
-Actor checkpoints are saved in `checkpoints/` and ignored by Git. Game sprites: [Genjoyers/Pac-Man](https://github.com/Genjoyers/Pac-Man), [Apache 2.0](assets/LICENSE).
+Defaults: 4k random prefill actions, 500k policy actions, CUDA or CPU. Final
+evaluation uses 100 games, seed 950000 and a 1,000-action cap; intermediate
+checks use a 200-action cap. A time limit can stop training early; `result.json`
+records the actual steps. Use `--resume` to continue a run. The blog used seed 1
+for the other four games.
 
-## Layout
-
-- `tinydreamer/`: game, actor, critic, trajectory, returns, evaluation, and visual encoder.
-- `train.py`, `train_actor_critic.py`, `train_visual.py`: training entry points.
-- `tests/`: game, learning, and encoder checks.
-
-## Space Invaders encoder result
-
-The simple experiment uses 300 training episodes (16,974 frames) and 20 separate test episodes (1,024 frames). The encoder compresses each 600-value observation to 64 values and the decoder reconstructs it. After 10,000 updates, the test foreground F1 was **0.993** using a fixed 0.5 cutoff.
-
-See [`artifacts/visual/metrics.json`](artifacts/visual/metrics.json) and [`artifacts/visual/reconstructions.png`](artifacts/visual/reconstructions.png). The image shows original observations on top and reconstructions below. This tests reconstruction of the current observation; it does not predict the next game state.
+Earlier versions and experiments are preserved in ignored `archive/`.
