@@ -1,6 +1,8 @@
 import torch
 
 
+# same lambda return as our previous.
+# G₂ = reward₂ + 0.99 × continuation₂ × (0.05 × critic(s₃) + 0.95 × G₃)
 def lambda_returns(
     rewards, continuations, next_values, discount=0.99, lam=0.95, valid=None
 ):
@@ -24,24 +26,3 @@ def lambda_returns(
         )
         returns.append(next_return)
     return torch.stack(returns[::-1], 1)
-
-
-def twohot(target, count=255):
-    transformed = target.sign() * target.abs().log1p()
-    location = ((transformed.clamp(-5, 5) + 5) * (count - 1) / 10).clamp(0, count - 1)
-    lower = location.floor().long().clamp(max=count - 2)
-    fraction = location - lower
-    result = torch.zeros((*target.shape, count), device=target.device)
-    result.scatter_add_(-1, lower[..., None], (1 - fraction)[..., None])
-    result.scatter_add_(-1, (lower + 1)[..., None], fraction[..., None])
-    return result
-
-
-def distribution_loss(logits, target):
-    return -(twohot(target, logits.shape[-1]) * logits.log_softmax(-1)).sum(-1)
-
-
-def distribution_mean(logits):
-    bins = torch.linspace(-5, 5, logits.shape[-1], device=logits.device)
-    bins = bins.sign() * bins.abs().expm1()
-    return (logits.softmax(-1) * bins).sum(-1)

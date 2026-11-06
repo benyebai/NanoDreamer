@@ -1,15 +1,17 @@
 """Online training/evaluation of the PyTorch MinAtar transformer adaptation."""
 
 import argparse
-from dataclasses import asdict
 import json
 import os
-from pathlib import Path
 import random
 import time
-from minatar import Environment
+from dataclasses import asdict
+from pathlib import Path
+
 import numpy as np
 import torch
+from minatar import Environment
+
 from nanodreamer.agent import Agent
 from nanodreamer.config import Config
 from nanodreamer.replay import Replay
@@ -51,7 +53,9 @@ def evaluate(agent, game_name, episodes=100, seed=930000, cap=200):
                         break
                 scores.append(score)
                 lengths.append(step + 1)
-            results[mode] = dict(mean=float(np.mean(scores)), scores=scores, lengths=lengths)
+            results[mode] = dict(
+                mean=float(np.mean(scores)), scores=scores, lengths=lengths
+            )
     return dict(seed=seed, episodes=episodes, cap=cap, **results)
 
 
@@ -85,7 +89,8 @@ def save(folder, agent, replay, game, state, rng):
     model = {
         name: value
         for (name, value) in data.items()
-        if name not in ("game", "state", "replay", "rng", "torch_rng", "cuda_rng", "optimizers")
+        if name
+        not in ("game", "state", "replay", "rng", "torch_rng", "cuda_rng", "optimizers")
     }
     torch.save(model, checkpoint / "model.pt")
     (folder / "latest.tmp.json").write_text(
@@ -97,7 +102,9 @@ def save(folder, agent, replay, game, state, rng):
 def load(folder, device):
     pointer = json.loads((Path(folder) / "latest.json").read_text())
     data = torch.load(
-        Path(pointer["checkpoint"]) / "resume.pt", map_location=device, weights_only=False
+        Path(pointer["checkpoint"]) / "resume.pt",
+        map_location=device,
+        weights_only=False,
     )
     agent = Agent(data["channels"], data["actions"], device, Config(**data["config"]))
     for name, key in (
@@ -116,7 +123,9 @@ def load(folder, device):
     agent.return_scale = data["return_scale"]
     torch.set_rng_state(data["torch_rng"].cpu())
     if data["cuda_rng"] is not None:
-        torch.cuda.set_rng_state_all([rng_state.cpu() for rng_state in data["cuda_rng"]])
+        torch.cuda.set_rng_state_all(
+            [rng_state.cpu() for rng_state in data["cuda_rng"]]
+        )
     return (agent, data["replay"], data["game"], data["state"], data["rng"])
 
 
@@ -136,7 +145,9 @@ def run(
     if resume and (not (folder / "latest.json").is_file()):
         raise FileNotFoundError(f"Cannot resume without checkpoint: {folder}")
     if not resume and folder.exists() and any(folder.iterdir()):
-        raise FileExistsError(f"Fresh training requires an empty output folder: {folder}")
+        raise FileExistsError(
+            f"Fresh training requires an empty output folder: {folder}"
+        )
     folder.mkdir(parents=True, exist_ok=True)
     torch.set_num_threads(2)
     np.random.seed(seed)
@@ -209,6 +220,7 @@ def run(
         state["previous"].append(action)
         state["images"] = state["images"][-config.context :]
         state["previous"] = state["previous"][-config.context :]
+        # FINAL CHANGE 21: training episode cap 200 -> 1000 actions.
         if done or state["episode_steps"] >= 1000:
             with (folder / "episodes.jsonl").open("a") as log_file:
                 log_file.write(
@@ -226,7 +238,12 @@ def run(
             state["recent_scores"] = state["recent_scores"][-100:]
             game.reset()
             replay.start(frame(game))
-            state.update(images=[frame(game)], previous=[agent.actions], score=0.0, episode_steps=0)
+            state.update(
+                images=[frame(game)],
+                previous=[agent.actions],
+                score=0.0,
+                episode_steps=0,
+            )
         if state["step"] % config.train_every == 0:
             update_start = time.monotonic()
             metrics = agent.update(replay)
@@ -245,7 +262,9 @@ def run(
                 steps_per_second=(state["step"] - starting_step) / (now - start_time),
                 updates=state["updates"],
                 recent_training_score=(
-                    float(np.mean(state["recent_scores"])) if state["recent_scores"] else None
+                    float(np.mean(state["recent_scores"]))
+                    if state["recent_scores"]
+                    else None
                 ),
                 **metrics,
             )
@@ -254,7 +273,9 @@ def run(
             print(json.dumps(row), flush=True)
             last_log_time = now
         if state["step"] % 50000 == 0:
-            evaluated = evaluate(agent, game_name, episodes=100, seed=920000 + state["step"])
+            evaluated = evaluate(
+                agent, game_name, episodes=100, seed=920000 + state["step"]
+            )
             (folder / f"eval_{state['step']}.json").write_text(
                 json.dumps(evaluated, indent=2) + "\n"
             )
@@ -276,7 +297,9 @@ def run(
             last_save_time = time.monotonic()
     elapsed = time.monotonic() - start_time
     save(folder, agent, replay, game, state, rng)
-    evaluated = evaluate(agent, game_name, episodes=final_episodes, seed=950000, cap=final_cap)
+    evaluated = evaluate(
+        agent, game_name, episodes=final_episodes, seed=950000, cap=final_cap
+    )
     (folder / "fresh_eval.json").write_text(json.dumps(evaluated, indent=2) + "\n")
     result = dict(
         **metadata,
@@ -288,7 +311,9 @@ def run(
         evaluation_cap=final_cap,
         agent_mean=evaluated["agent"]["mean"],
         random_mean=evaluated["random"]["mean"],
-        peak_gpu_gib=torch.cuda.max_memory_allocated() / 2**30 if device == "cuda" else None,
+        peak_gpu_gib=torch.cuda.max_memory_allocated() / 2**30
+        if device == "cuda"
+        else None,
     )
     (folder / "result.json").write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(dict(event="completed", **result)), flush=True)

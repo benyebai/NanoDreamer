@@ -6,7 +6,7 @@ import torch
 
 from nanodreamer.agent import Agent
 from nanodreamer.config import Config
-from nanodreamer.losses import lambda_returns, twohot
+from nanodreamer.losses import lambda_returns
 from nanodreamer.models import WorldModel
 from nanodreamer.replay import Replay
 
@@ -57,11 +57,6 @@ class TransformerAgentTests(unittest.TestCase):
         self.assertTrue((data["valid"].sum(-1) == 1).all())
         self.assertTrue((data["future_valid"].sum(-1) == 1).all())
         np.testing.assert_array_equal(data["frames"][:, -1], data["future"][:, 0])
-
-    def test_twohot_mass_and_zero_value(self):
-        labels = twohot(torch.tensor([-1e6, -1.0, 0.0, 1.0, 1e6]))
-        torch.testing.assert_close(labels.sum(-1), torch.ones(5))
-        self.assertEqual(labels[2, 127].item(), 1.0)
 
     def test_complete_update_has_finite_losses_and_no_actor_gradient_into_world(self):
         replay = Replay(self.config, 4, 3, 1)
